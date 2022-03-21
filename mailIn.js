@@ -318,8 +318,7 @@ app.get('/emails', async (req, res) => {
     res.render('mail', {
       title: 'VINIO MAIL',
       patterns: values,
-      last50: last50,
-      moment: moment,
+      last50: last50
     });
 })
 
