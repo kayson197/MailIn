@@ -169,6 +169,8 @@
       $.ajax({
           url: "/api/email/last50",
           success:function(last50){
+            var rowCount = $('#tlbLast50 tr').length;
+            console.log(rowCount);
             for(var i=last50.length-1; i>=0; i--){
               var item = JSON.parse(last50[i]);
               $("#tlbLast50").prepend("<tr>"
@@ -177,7 +179,9 @@
                 + "<td>"+item.content+"</td>"
                 + "<td>"+(item.code==null?"":item.code)+"</td>"
                 + "</tr>");
-                $('#tlbLast50 tr:last').remove();
+                rowCount--;
+                if(rowCount > 0)
+                  $('#tlbLast50 tr:last').remove();
             }
               setTimeout(function(){
                   reloadLast50(); //this will send request again and again;
