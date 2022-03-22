@@ -156,7 +156,6 @@ function cleanPattern(value){
 
 async function findVerificationText(input)
 {
-  input = input.toLowerCase();
   const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
   for (var pattern of patterns) {
     pattern = cleanPattern(pattern);
@@ -287,13 +286,15 @@ app.get('/api/email/verify/', async (req, res) => {
     if(req.query.timeout != null)
       timeout =  parseInt(req.query.timeout);
     let value = await client.get(email);
+    let result = {};
     if (value){
         data = JSON.parse(value);
-        console.log(data);
-        res.send(data);
+        let result = {"success":true,"error":"","data":data.code};
+        console.log(result);
+        res.send(result);
     }
     else {
-        res.send({data: null})
+        res.send({"success":false,"error":"No data found","data":null});
     }
 })
 
