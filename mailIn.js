@@ -159,7 +159,6 @@ async function findVerificationText(input)
   const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
   for (var pattern of patterns) {
     pattern = cleanPattern(pattern);
-      pattern = pattern.toLowerCase();
       let m;
       let regex = RegExp(pattern, 'g');
       let array1;
@@ -386,7 +385,7 @@ app.patch('/api/email/patterns/',  async (req, res) => {
 app.post('/api/email/test/',  async (req, res) => {
     // result = {"success":false,"error":"No data found","data":null}
     // const email =  req.query.email;
-    const input = req.body['input'].toLowerCase();
+    const input = req.body['input'];
     let pattern = req.body['pattern'];
 
     console.log('input: ' + input);
@@ -396,7 +395,6 @@ app.post('/api/email/test/',  async (req, res) => {
       result = await findVerificationText(input);
     }else{
       pattern = cleanPattern(pattern);
-      pattern = pattern.toLowerCase();
       if(validatePattern(pattern)){
         let regex = RegExp(pattern, 'g');
         let array1;
