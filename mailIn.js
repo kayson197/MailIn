@@ -277,10 +277,11 @@ nodeMailin.on("error", function(error) {
     console.log(error);
 });
 
-app.get('/api/email/verify/', async (req, res) => {
+app.get('/api/verify/email/:email', async (req, res) => {
     // result = {"success":false,"error":"No data found","data":null}
     let data = null;
-    const email =  req.query.email;
+    const email = req.params.email;
+    // const email =  req.query.email;
     let timeout = 10000;
     if(req.query.timeout != null)
       timeout =  parseInt(req.query.timeout);
