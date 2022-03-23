@@ -129,10 +129,10 @@
                   <tbody>
                     <% for(var i=0; i < last50.length; i++) { var item = JSON.parse(last50[i]); %>
                      <tr role="row" class=<%= i%2==0?"even":"odd" %>>
-                       <td><%= Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %></td>
-                       <td><%= item.receiver %></td>
-                       <td><%= item.content %></td>
-                       <td><%= item.code %></td>
+                       <td style="width:15%"><%= Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %></td>
+                       <td style="width:10%"><%= item.receiver %></td>
+                       <td style="width:60%"><%= item.content %></td>
+                       <td style="width:15%"><%= item.code %></td>
                        <td></td>
                      </tr>
                      <% } %>
@@ -174,10 +174,10 @@
             for(var i=last50.length-1; i>=0; i--){
               var item = JSON.parse(last50[i]);
               $("#tlbLast50").prepend("<tr>"
-                + "<td>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
-                + "<td>"+(item.receiver==undefined?"":item.receiver)+"</td>"
-                + "<td>"+item.content+"</td>"
-                + "<td>"+(item.code==null?"":item.code)+"</td>"
+                + "<td style='width:15%'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
+                + "<td style='width:10%'>"+(item.receiver==undefined?"":item.receiver)+"</td>"
+                + "<td style='width:60%'>"+item.content+"</td>"
+                + "<td style='width:15%'>"+(item.code==null?"":item.code)+"</td>"
                 + "</tr>");
                 rowCount--;
                 if(rowCount > 0)
@@ -302,12 +302,12 @@
     $("#btnNumber").click(function(e) {
       e.preventDefault();
       console.log("aaa");
-      $("#pattern").val($("#pattern").val() + "{number} ");
+      $("#pattern").val($("#pattern").val() + "{$number} ");
     });
     $("#btnAlphaNumber").click(function(e) {
       e.preventDefault();
       console.log("aaa");
-      $("#pattern").val($("#pattern").val() + "{alphaNumber} ");
+      $("#pattern").val($("#pattern").val() + "{$alphaNumber} ");
     });
 
     function deletePattern(rowIndex){
