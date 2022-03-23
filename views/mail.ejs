@@ -127,8 +127,8 @@
                     <table id="tlbLast50" class="table  table-bordered table-hover dataTable " role="grid" style="width: 100%; table-layout:fixed;" aria-describedby="example2_info">
                       <thead>
                       <tr role="row">
-                        <th style="width:10%">Time</th>
-                        <th style="width:15%">Email</th>
+                        <th style="width:7%">Time</th>
+                        <th style="width:18%">Email</th>
                         <th style="width:25%">Code</th>
                         <th style="width:50%">Content</th>
                       </tr>
@@ -136,8 +136,8 @@
                       <tbody>
                         <% for(var i=0; i < last50.length; i++) { var item = JSON.parse(last50[i]); %>
                          <tr role="row" class=<%= i%2==0?"even":"odd" %>>
-                           <td style="width:10%"><%= Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %></td>
-                           <td style="width:15%; overflow:scroll"><%= item.receiver %></td>
+                           <td style="width:7%"><%= Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %></td>
+                           <td style="width:18%; overflow:scroll"><%= item.receiver %></td>
                            <td style="width:25%; overflow:scroll"><%= item.code %></td>
                            <td style="width:50%; overflow:scroll"><%= item.content %></td>
                            <td></td>
@@ -181,8 +181,8 @@
             for(var i=last50.length-1; i>=0; i--){
               var item = JSON.parse(last50[i]);
               $("#tlbLast50").prepend("<tr>"
-                + "<td style='width:10%'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
-                + "<td style='overflow:scroll; width:15%'>"+(item.receiver==undefined?"":item.receiver)+"</td>"
+                + "<td style='width:7%'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
+                + "<td style='overflow:scroll; width:18%'>"+(item.receiver==undefined?"":item.receiver)+"</td>"
                 + "<td style='overflow:scroll; width:25%'>"+(item.code==null?"":item.code)+"</td>"
                 + "<td style='overflow:scroll; width:50%'>"+item.content+"</td>"
                 + "</tr>");
