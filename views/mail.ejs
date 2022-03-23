@@ -183,8 +183,8 @@
               $("#tlbLast50").prepend("<tr>"
                 + "<td width='15%'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
                 + "<td width='10%'>"+(item.receiver==undefined?"":item.receiver)+"</td>"
-                + "<td style='overflow:scroll; width=20%'>"+(item.code==null?"":item.code)+"</td>"
-                + "<td style='overflow:scroll; width=55%'>"+item.content+"</td>"
+                + "<td style='overflow:scroll; width:20%'>"+(item.code==null?"":item.code)+"</td>"
+                + "<td style='overflow:scroll; width:55%'>"+item.content+"</td>"
                 + "</tr>");
                 rowCount--;
                 if(rowCount > 0)
