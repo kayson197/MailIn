@@ -128,7 +128,7 @@
                       <thead>
                       <tr role="row">
                         <th style="width:7%">Time</th>
-                        <th style="width:18%">Email</th>
+                        <th style="width:18%">Email / Pattern</th>
                         <th style="width:25%">Code</th>
                         <th style="width:50%">Content</th>
                       </tr>
@@ -182,7 +182,7 @@
               var item = JSON.parse(last50[i]);
               $("#tlbLast50").prepend("<tr>"
                 + "<td style='width:7%'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
-                + "<td style='overflow:scroll; width:18%'>"+(item.receiver==undefined?"":item.receiver)+"</td>"
+                + "<td style='overflow:scroll; width:18%'>"+(item.receiver==undefined?"":item.receiver) + "</br>" + item.pattern+"</td>"
                 + "<td style='overflow:scroll; width:25%'>"+(item.code==null?"":item.code)+"</td>"
                 + "<td style='overflow:scroll; width:50%'>"+item.content+"</td>"
                 + "</tr>");
