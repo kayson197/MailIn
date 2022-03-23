@@ -122,8 +122,8 @@
                   <tr role="row">
                     <th style="width:15%">Time</th>
                     <th style="width:10%">Email</th>
-                    <th style="width:60%">Content</th>
                     <th style="width:15%">Code</th>
+                    <th style="width:60%">Content</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -131,8 +131,8 @@
                      <tr role="row" class=<%= i%2==0?"even":"odd" %>>
                        <td style="width:15%"><%= Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %></td>
                        <td style="width:10%"><%= item.receiver %></td>
-                       <td style="width:60%"><%= item.content %></td>
                        <td style="width:15%"><%= item.code %></td>
+                       <td style="width:60%"><%= item.content %></td>
                        <td></td>
                      </tr>
                      <% } %>
@@ -176,8 +176,8 @@
               $("#tlbLast50").prepend("<tr>"
                 + "<td style='width:15%'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
                 + "<td style='width:10%'>"+(item.receiver==undefined?"":item.receiver)+"</td>"
-                + "<td style='width:60%'>"+item.content+"</td>"
                 + "<td style='width:15%'>"+(item.code==null?"":item.code)+"</td>"
+                + "<td style='width:60%'>"+item.content+"</td>"
                 + "</tr>");
                 rowCount--;
                 if(rowCount > 0)
