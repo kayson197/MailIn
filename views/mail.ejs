@@ -129,10 +129,10 @@
                   <tbody>
                     <% for(var i=0; i < last50.length; i++) { var item = JSON.parse(last50[i]); %>
                      <tr role="row" class=<%= i%2==0?"even":"odd" %>>
-                       <td style="width:15%"><%= Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %></td>
-                       <td style="width:10%"><%= item.receiver %></td>
-                       <td style="width:15%"><%= item.code %></td>
-                       <td style="width:60%"><%= item.content %></td>
+                       <td width='15%'><%= Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %></td>
+                       <td width='10%'><%= item.receiver %></td>
+                       <td width='15%'><%= item.code %></td>
+                       <td width='60%'><%= item.content %></td>
                        <td></td>
                      </tr>
                      <% } %>
@@ -174,10 +174,10 @@
             for(var i=last50.length-1; i>=0; i--){
               var item = JSON.parse(last50[i]);
               $("#tlbLast50").prepend("<tr>"
-                + "<td style='width:15%'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
-                + "<td style='width:10%'>"+(item.receiver==undefined?"":item.receiver)+"</td>"
-                + "<td style='width:15%'>"+(item.code==null?"":item.code)+"</td>"
-                + "<td style='width:60%'>"+item.content+"</td>"
+                + "<td width='15%'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
+                + "<td width='10%'>"+(item.receiver==undefined?"":item.receiver)+"</td>"
+                + "<td width='15%'>"+(item.code==null?"":item.code)+"</td>"
+                + "<td width='60%'>"+item.content+"</td>"
                 + "</tr>");
                 rowCount--;
                 if(rowCount > 0)
