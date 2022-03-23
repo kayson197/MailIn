@@ -158,20 +158,18 @@ async function findVerificationText(input)
 {
   const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
   for (var pattern of patterns) {
-    pattern = cleanPattern(pattern);
       let m;
-      let regex = RegExp(pattern, 'g');
+      let regex = RegExp(cleanPattern(pattern), 'g');
       let array1;
       while ((array1 = regex.exec(input)) !== null) {
-        console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
-
+        // console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
         let result = array1[1].trim();
         if (result.includes('://')) {
             // result = htmlspecialchars_decode(result);
             result = htmlspecialchars(result);
             result = result.replace("\n", urlencode(' '));
         }
-        return result;
+        return {"result": result, "pattern": pattern};
       }
   }
   return null;
@@ -252,7 +250,8 @@ nodeMailin.on("message", async function(connection, data, content) {
       var result = {};
       result['time'] = Date.now();
       result['content'] = mContent;
-      result['code'] = sfind;
+      result['code'] = sfind.result;
+      result['pattern'] = sfind.pattern;
       console.log(result);
       //here key will expire after 24 hours
      client.setex(receiver, 24*60*60, JSON.stringify(result), function(err, rs) {
@@ -384,31 +383,30 @@ app.patch('/api/email/patterns/',  async (req, res) => {
 });
 
 app.post('/api/email/test/',  async (req, res) => {
-    // result = {"success":false,"error":"No data found","data":null}
     // const email =  req.query.email;
     const input = req.body['input'];
     let pattern = req.body['pattern'];
 
     console.log('input: ' + input);
     console.log('pattern: ' + pattern)
-    var result = "";
     if(pattern == ""){
-      result = await findVerificationText(input);
+      var response = await findVerificationText(input);
+      return res.send({"result": response.result, "pattern": response.pattern});
     }else{
-      pattern = cleanPattern(pattern);
       if(validatePattern(pattern)){
-        let regex = RegExp(pattern, 'g');
+        let regex = RegExp(cleanPattern(pattern), 'g');
         let array1;
         while ((array1 = regex.exec(input)) !== null) {
           console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
 
-          result = array1[1].trim();
+          var result = array1[1].trim();
           if (result.includes('://')) {
               // result = htmlspecialchars_decode(result);
               result = htmlspecialchars(result);
               result = result.replace("\n", urlencode(' '));
           }
-          break;
+          console.log("result: " + result);
+          return res.send({"result": result, "pattern": pattern});
         }
       }else {
         return res.status(400).send({
@@ -416,8 +414,7 @@ app.post('/api/email/test/',  async (req, res) => {
         });
       }
     }
-    console.log("result: " + result);
-    res.send(result);
+
 })
 
 
