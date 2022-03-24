@@ -7,6 +7,7 @@ client.lrange = util.promisify(client.lrange);
 var bodyParser = require('body-parser');
 const htmlspecialchars = require('htmlspecialchars');
 const urlencode = require('rawurlencode');
+const convert = require('html-to-text');
 
 const LAST50_KEY = 'LAST50';
 const PATTERNS_KEY = 'PATTERNS';
@@ -246,8 +247,9 @@ nodeMailin.on("startMessage", function(connection) {
 nodeMailin.on("message", async function(connection, data, content) {
     // console.log(data);
     // console.log(content);
+    // console.log(data['text']);
     const receiver = data['to']['text'];
-    const mContent  = data['textAsHtml'];
+    const mContent  = data['text'];
     // bot.sendMessage(chatId, 'Content text: ' + mContent);
     console.log("content: " + mContent);
     if(receiver.includes('@') && mContent != ""){
@@ -410,7 +412,7 @@ app.post('/api/email/test/',  async (req, res) => {
           if (result.includes('://')) {
               // result = htmlspecialchars_decode(result);
               result = htmlspecialchars(result);
-              result = result.replace("\n", urlencode(' '));
+              // result = result.replace("\n", urlencode(' '));
           }
           console.log("result: " + result);
           return res.send({"result": result, "pattern": pattern});
@@ -450,6 +452,11 @@ async function initRedis(){
   //     console.log(last50);
   // }
 }
+
+// let result  = "https://url4023.youngplatform.com/ls/click?upn=2hDqYz9j1va9CISNN-2F7FRrQdQdsDDwXLC-2BUYCmBXDohSRA0DaCq1Onvhu5vZp2Rxo4aG1K6nSVnJLndk0UDIskQ3FNZZdIPDcQ0bRop3CkJXbwu3GRQT501nHqpTy9sCp3-2FSZwyg1wT0PHSC6XP0HBVhJ8fnWQsRywk6lRJfniR4F1-2F2G7XJP1xH4vPk-2BDCfo53y-2FLO-2BhHUvtbYQ2dvQAnHtgtOxodn8AMtDValo2A1gKJst7NAG-2BLAQDsSYuav021R6VRFvJMPfPTPG89wwVGLI0AwMcpBMQl2-2F4zy63e6vz79G6wmSQkx-2FLrRFKjrCBPMvSFMmf9oiJL02dPZ38YjQ5tKB3CMu22D2NSodJcSWq-2BBFPzbLcK-2B7VZfJJLRpMHH7_utS5XGJX6u-2B5G-2Bs8alXEIAG-2BZJEOuGGA3weXFoA5QjPYe1miV8NQGpUDlJ2T0tPYvDo1sTGXKRoHhGadc2rWTrtB1b7ubepK1ltd8h6hEaWUJBKUyeFJvnWiQ8k6Ms915xIp6ci8jlBuy3s0kT97bSBUsSHj17mrgbu5gmlYsOQtDw2Dw7Jqa7TXwteEnazVXWLVs6HxWdgFGVM3Jw2jfQ-3D-3D";
+// result = htmlspecialchars(result);
+// result = result.replace("\n", urlencode(' '));
+// console.log(result);
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);

@@ -12,6 +12,7 @@
   "dependencies": {
     "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "html-to-text": "^8.1.0",
     "htmlspecialchars": "^1.0.5",
     "node-mailin": "^2.5.0",
     "node-telegram-bot-api": "^0.54.0",
