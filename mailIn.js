@@ -158,6 +158,7 @@ async function findVerificationText(input)
 {
   const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
   for (var pattern of patterns) {
+    try {
       let m;
       let regex = RegExp(cleanPattern(pattern), 'g');
       let array1;
@@ -171,6 +172,9 @@ async function findVerificationText(input)
         }
         return {"result": result, "pattern": pattern};
       }
+    } catch (e) {
+
+    }
   }
   return null;
 }
@@ -250,8 +254,8 @@ nodeMailin.on("message", async function(connection, data, content) {
       var result = {};
       result['time'] = Date.now();
       result['content'] = mContent;
-      result['code'] = sfind.result;
-      result['pattern'] = sfind.pattern;
+      result['code'] = sfind==null?"":sfind.result;
+      result['pattern'] = sfind==null?"":sfind.pattern;
       console.log(result);
       //here key will expire after 24 hours
      client.setex(receiver, 24*60*60, JSON.stringify(result), function(err, rs) {
