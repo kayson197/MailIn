@@ -332,7 +332,7 @@ function validatePattern(pattern){
         ||pattern.includes(link) ||pattern.includes(number) ||pattern.includes(alphaNumber) ||pattern.includes(linkMarkdown) ){
         return true;
     }
-    return false;
+    return true;
 }
 
 app.post('/api/email/patterns/',  async (req, res) => {
