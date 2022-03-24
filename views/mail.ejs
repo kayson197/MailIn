@@ -168,9 +168,9 @@
   <%- include('partials/footer.ejs') %>
   <<script type="text/javascript">
     $("#tlbLast50").ready(function(){
-      // setTimeout(function(){
-      //     reloadLast50(); //this will send request again and again;
-      // }, 5000);
+      setTimeout(function(){
+          reloadLast50(); //this will send request again and again;
+      }, 5000);
   });
   function reloadLast50(){
       $.ajax({
