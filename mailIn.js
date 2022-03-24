@@ -383,6 +383,7 @@ app.patch('/api/email/patterns/',  async (req, res) => {
 });
 
 app.post('/api/email/test/',  async (req, res) => {
+  try {
     // const email =  req.query.email;
     const input = req.body['input'];
     let pattern = req.body['pattern'];
@@ -414,6 +415,12 @@ app.post('/api/email/test/',  async (req, res) => {
         });
       }
     }
+  } catch (e) {
+    return res.status(400).send({
+       message: e
+    });
+  }
+
 
 })
 
