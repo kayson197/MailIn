@@ -396,7 +396,7 @@ app.post('/api/email/test/',  async (req, res) => {
     console.log('pattern: ' + pattern)
     if(pattern == ""){
       var response = await findVerificationText(input);
-      return res.send({"result": response==null?"":response.result, "pattern": response==null?:"":response.pattern});
+      return res.send({"result": response==null?"":response.result, "pattern": response==null?"":response.pattern});
     }else{
       if(validatePattern(pattern)){
         let regex = RegExp(cleanPattern(pattern), 'g');
