@@ -409,11 +409,11 @@ app.post('/api/email/test/',  async (req, res) => {
           console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
 
           var result = array1[1].trim();
-          if (result.includes('://')) {
-              // result = htmlspecialchars_decode(result);
-              result = htmlspecialchars(result);
-              // result = result.replace("\n", urlencode(' '));
-          }
+          // if (result.includes('://')) {
+          //     // result = htmlspecialchars_decode(result);
+          //     result = htmlspecialchars(result);
+          //     // result = result.replace("\n", urlencode(' '));
+          // }
           console.log("result: " + result);
           return res.send({"result": result, "pattern": pattern});
         }
