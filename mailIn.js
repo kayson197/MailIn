@@ -244,8 +244,10 @@ nodeMailin.on("startMessage", function(connection) {
 
 /* Event emitted after a message was received and parsed. */
 nodeMailin.on("message", async function(connection, data, content) {
+    // console.log(data);
+    // console.log(content);
     const receiver = data['to']['text'];
-    const mContent  = data['text'];
+    const mContent  = data['textAsHtml'];
     // bot.sendMessage(chatId, 'Content text: ' + mContent);
     console.log("content: " + mContent);
     if(receiver.includes('@') && mContent != ""){
@@ -280,7 +282,7 @@ nodeMailin.on("error", function(error) {
     console.log(error);
 });
 
-app.get('/api/verify/email/:email', async (req, res) => {
+app.get('/api/verify/email/:email/:timeout', async (req, res) => {
     // result = {"success":false,"error":"No data found","data":null}
     let data = null;
     const email = req.params.email;
