@@ -169,15 +169,15 @@ async function findVerificationText(input)
       while ((array1 = regex.exec(input)) !== null) {
         // console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
         let result = array1[1].trim();
-        if (result.includes('://')) {
-            // result = htmlspecialchars_decode(result);
-            result = htmlspecialchars(result);
-            result = result.replace("\n", urlencode(' '));
-        }
+        // if (result.includes('://')) {
+        //     // result = htmlspecialchars_decode(result);
+        //     result = htmlspecialchars(result);
+        //     // result = result.replace("\n", urlencode(' '));
+        // }
         return {"result": result, "pattern": pattern};
       }
     } catch (e) {
-
+      console.log(e);
     }
   }
   return {"result": "", "pattern": ""};
@@ -248,7 +248,7 @@ nodeMailin.on("startMessage", function(connection) {
 /* Event emitted after a message was received and parsed. */
 nodeMailin.on("message", async function(connection, data, content) {
     // console.log(data['text']);
-    console.log(data);
+    // console.log(data);
     const receiver = data['to']['text'];
     let htmlContent = data['html'];
     let mContent = convert(htmlContent, {
@@ -257,11 +257,12 @@ nodeMailin.on("message", async function(connection, data, content) {
     // mContent = mContent.replace(/[/g,' ');
     mContent = mContent.replace(/]/g,' ');
     mContent = mContent.replace(/\[/g,' ');
+    mContent = mContent.replace(/\n/g,'');
 
     console.log(mContent);
       // let mContent  = new Buffer(content).toString('utf8');
       // mContent = htmlspecialchars(mContent);
-      mContent = mContent.replace(/=\r\n/g,'');
+      // mContent = mContent.replace(/=\r\n/g,'');
     // bot.sendMessage(chatId, 'Content text: ' + mContent);
     // console.log("content: " + mContent);
     if(receiver.includes('@') && mContent != ""){
@@ -424,7 +425,7 @@ app.post('/api/email/test/',  async (req, res) => {
           if (result.includes('://')) {
               // result = htmlspecialchars_decode(result);
               result = htmlspecialchars(result);
-              result = result.replace("\n", urlencode(' '));
+              // result = result.replace("\n", urlencode(' '));
           }
           console.log("result: " + result);
           return res.send({"result": result, "pattern": pattern});
