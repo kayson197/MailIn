@@ -7,7 +7,10 @@ client.lrange = util.promisify(client.lrange);
 var bodyParser = require('body-parser');
 const htmlspecialchars = require('htmlspecialchars');
 const urlencode = require('rawurlencode');
-const convert = require('html-to-text');
+// var quotedPrintable = require('quoted-printable');
+// var utf8 = require('utf8');
+// fs = require('fs');
+const { convert } = require('html-to-text');
 
 const LAST50_KEY = 'LAST50';
 const PATTERNS_KEY = 'PATTERNS';
@@ -242,25 +245,34 @@ nodeMailin.on("startMessage", function(connection) {
 });
 
 
-
 /* Event emitted after a message was received and parsed. */
 nodeMailin.on("message", async function(connection, data, content) {
-    // console.log(data);
-    // console.log(content);
     // console.log(data['text']);
+    console.log(data);
     const receiver = data['to']['text'];
-    const mContent  = data['text'];
+    let htmlContent = data['html'];
+    let mContent = convert(htmlContent, {
+      wordwrap: 130
+    });
+    // mContent = mContent.replace(/[/g,' ');
+    mContent = mContent.replace(/]/g,' ');
+    mContent = mContent.replace(/\[/g,' ');
+
+    console.log(mContent);
+      // let mContent  = new Buffer(content).toString('utf8');
+      // mContent = htmlspecialchars(mContent);
+      mContent = mContent.replace(/=\r\n/g,'');
     // bot.sendMessage(chatId, 'Content text: ' + mContent);
-    console.log("content: " + mContent);
+    // console.log("content: " + mContent);
     if(receiver.includes('@') && mContent != ""){
       const sfind = await findVerificationText(mContent);
-      console.log('sfind: ' + sfind);
+      console.log('sfind: ' + sfind.result);
       var result = {};
       result['time'] = Date.now();
       result['content'] = mContent;
       result['code'] = sfind==null?"":sfind.result;
       result['pattern'] = sfind==null?"":sfind.pattern;
-      console.log(result);
+      // console.log(result);
       //here key will expire after 24 hours
      client.setex(receiver, 24*60*60, JSON.stringify(result), function(err, rs) {
        console.log(rs);
@@ -409,11 +421,11 @@ app.post('/api/email/test/',  async (req, res) => {
           console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
 
           var result = array1[1].trim();
-          // if (result.includes('://')) {
-          //     // result = htmlspecialchars_decode(result);
-          //     result = htmlspecialchars(result);
-          //     // result = result.replace("\n", urlencode(' '));
-          // }
+          if (result.includes('://')) {
+              // result = htmlspecialchars_decode(result);
+              result = htmlspecialchars(result);
+              result = result.replace("\n", urlencode(' '));
+          }
           console.log("result: " + result);
           return res.send({"result": result, "pattern": pattern});
         }
@@ -457,6 +469,7 @@ async function initRedis(){
 // result = htmlspecialchars(result);
 // result = result.replace("\n", urlencode(' '));
 // console.log(result);
+
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
