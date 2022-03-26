@@ -158,7 +158,7 @@ function cleanPattern(value){
   return s_pattern;
 }
 
-async function findVerificationText(input)
+async function findVerificationText(sender, input)
 {
   const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
   for (var pattern of patterns) {
@@ -184,19 +184,6 @@ async function findVerificationText(input)
 }
 
 
-/* Start the Node-Mailin server. The available options are:
- *  *  options = {
- *   *     port: 25,
- *    *     logFile: '/some/local/path',
- *     *     logLevel: 'warn', // One of silly, info, debug, warn, error
- *      *     smtpOptions: { // Set of options directly passed to simplesmtp.createServer(smtpOptions)
- *       *        SMTPBanner: 'Hi from a custom Node-Mailin instance',
- *        *        // By default, the DNS validation of the sender and recipient domains is disabled so.
- *         *        // You can enable it as follows:
- *          *        disableDNSValidation: false
- *           *     }
- *            *  };
- *             * parsed message. */
 nodeMailin.start({
     port: 25
 });
@@ -249,27 +236,23 @@ nodeMailin.on("startMessage", function(connection) {
 nodeMailin.on("message", async function(connection, data, content) {
     // console.log(data['text']);
     // console.log(data);
-    const receiver = data['to']['text'];
+    const receiver = data['envelopeTo']['address'];
+    const sender = data['envelopeFrom']['address'];
+    // console.log(sender);
     let htmlContent = data['html'];
     let mContent = convert(htmlContent, {
       wordwrap: 130
     });
-    // mContent = mContent.replace(/[/g,' ');
     mContent = mContent.replace(/]/g,' ');
     mContent = mContent.replace(/\[/g,' ');
     mContent = mContent.replace(/\n/g,'');
-
-    console.log(mContent);
-      // let mContent  = new Buffer(content).toString('utf8');
-      // mContent = htmlspecialchars(mContent);
-      // mContent = mContent.replace(/=\r\n/g,'');
-    // bot.sendMessage(chatId, 'Content text: ' + mContent);
-    // console.log("content: " + mContent);
+    // console.log(mContent);
     if(receiver.includes('@') && mContent != ""){
-      const sfind = await findVerificationText(mContent);
-      console.log('sfind: ' + sfind.result);
+      const sfind = await findVerificationText(sender, mContent);
+      // console.log('sfind: ' + sfind.result);
       var result = {};
       result['time'] = Date.now();
+      result['from'] = sender;
       result['content'] = mContent;
       result['code'] = sfind==null?"":sfind.result;
       result['pattern'] = sfind==null?"":sfind.pattern;
@@ -281,7 +264,6 @@ nodeMailin.on("message", async function(connection, data, content) {
 
      var fullDetail = result;
      fullDetail['receiver'] = receiver;
-
      client.LLEN(LAST50_KEY, function(err, len) {
        console.log("LLEN: " + len);
        if(len >= 50){
@@ -404,31 +386,30 @@ app.patch('/api/email/patterns/',  async (req, res) => {
 });
 
 app.post('/api/email/test/',  async (req, res) => {
+  const input = req.body['input'];
+  let pattern = req.body['pattern'];
   try {
-    // const email =  req.query.email;
-    const input = req.body['input'];
-    let pattern = req.body['pattern'];
-
     console.log('input: ' + input);
     console.log('pattern: ' + pattern)
     if(pattern == ""){
-      var response = await findVerificationText(input);
+      var response = await findVerificationText("", input);
       return res.send({"result": response==null?"":response.result, "pattern": response==null?"":response.pattern});
     }else{
       if(validatePattern(pattern)){
         let regex = RegExp(cleanPattern(pattern), 'g');
         let array1;
         while ((array1 = regex.exec(input)) !== null) {
-          console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
-
-          var result = array1[1].trim();
-          if (result.includes('://')) {
-              // result = htmlspecialchars_decode(result);
-              result = htmlspecialchars(result);
-              // result = result.replace("\n", urlencode(' '));
+          console.log(array1);
+          if(array1[1] != undefined){
+            console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
+            var result = array1[1].trim();
+            // if (result.includes('://')) {
+            //     result = htmlspecialchars(result);
+            //     // result = result.replace("\n", urlencode(' '));
+            // }
+            console.log("result: " + result);
+            return res.send({"result": result, "pattern": pattern});
           }
-          console.log("result: " + result);
-          return res.send({"result": result, "pattern": pattern});
         }
       }else {
         return res.status(400).send({
@@ -437,11 +418,12 @@ app.post('/api/email/test/',  async (req, res) => {
       }
     }
   } catch (e) {
+    console.log(e);
     return res.status(400).send({
-       message: e
+       message: e.message
     });
   }
-
+  return res.send({"result": "", "pattern": pattern});
 
 })
 
