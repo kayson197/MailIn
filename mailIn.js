@@ -238,7 +238,7 @@ nodeMailin.on("startMessage", function(connection) {
 nodeMailin.on("message", async function(connection, data, content) {
     // console.log(data['text']);
     // console.log(data);
-    const receiver = data['envelopeTo']['address'];
+    const receiver = data['to']['text'];
     const sender = data['envelopeFrom']['address'];
     // console.log(sender);
     let htmlContent = data['html'];
@@ -249,7 +249,7 @@ nodeMailin.on("message", async function(connection, data, content) {
     mContent = mContent.replace(/\[/g,' ');
     mContent = mContent.replace(/\n/g,'');
     // console.log(mContent);
-    if(receiver.includes('@') && mContent != ""){
+    if(receiver != undefined && receiver.includes('@') && mContent != ""){
       const sfind = await findVerificationText(sender, mContent);
       // console.log('sfind: ' + sfind.result);
       var result = {};
