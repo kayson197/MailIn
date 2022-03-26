@@ -167,14 +167,16 @@ async function findVerificationText(sender, input)
       let regex = RegExp(cleanPattern(pattern), 'g');
       let array1;
       while ((array1 = regex.exec(input)) !== null) {
-        // console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
-        let result = array1[1].trim();
-        // if (result.includes('://')) {
-        //     // result = htmlspecialchars_decode(result);
-        //     result = htmlspecialchars(result);
-        //     // result = result.replace("\n", urlencode(' '));
-        // }
-        return {"result": result, "pattern": pattern};
+        if(array1[1] != undefined){
+          // console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
+          let result = array1[1].trim();
+          // if (result.includes('://')) {
+          //     // result = htmlspecialchars_decode(result);
+          //     result = htmlspecialchars(result);
+          //     // result = result.replace("\n", urlencode(' '));
+          // }
+          return {"result": result, "pattern": pattern};
+        }
       }
     } catch (e) {
       console.log(e);
@@ -399,7 +401,6 @@ app.post('/api/email/test/',  async (req, res) => {
         let regex = RegExp(cleanPattern(pattern), 'g');
         let array1;
         while ((array1 = regex.exec(input)) !== null) {
-          console.log(array1);
           if(array1[1] != undefined){
             console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
             var result = array1[1].trim();
@@ -456,5 +457,5 @@ async function initRedis(){
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
-      initRedis();
+      // initRedis();
 })
