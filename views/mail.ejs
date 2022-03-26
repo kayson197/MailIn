@@ -135,8 +135,8 @@
                     <table id="tlbLast50" class="table  table-bordered table-hover dataTable " role="grid" style="width: 100%; table-layout:fixed;" aria-describedby="example2_info">
                       <thead>
                       <tr role="row">
-                        <th style="width:7%">Time</th>
-                        <th style="width:18%">Email / Pattern</th>
+                        <!-- <th style="width:7%">Time</th> -->
+                        <th style="width:25%">Email / Pattern</th>
                         <th style="width:25%">Code</th>
                         <th style="width:50%">Content</th>
                       </tr>
@@ -144,8 +144,9 @@
                       <tbody>
                         <% for(var i=0; i < last50.length; i++) { var item = JSON.parse(last50[i]); %>
                          <tr style="line-height:0" role="row" class=<%= i%2==0?"even":"odd" %>>
-                           <td style="width:7%; height:120px"><%= Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %></td>
-                           <td style="width:18%; height:120px; overflow:hidden"><b>To: </b><%= item.receiver %></br><b>From: </b><%= item.from %></br><b>Pattern: </b><%= item.pattern %></td>
+                           <% var time =  Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %>
+                           <!-- <td style="width:7%; height:120px"></td> -->
+                           <td style="width:25%; height:120px; overflow:hidden"><b>Time: </b><%= time %><b></br>To: </b><%= item.receiver %></br><b>From: </b><%= item.from %></br><b>Pattern: </b><%= item.pattern %></td>
                            <td style="width:25%; height:120px; overflow:hidden"><%= item.code %></td>
                            <td style="width:50%; height:120px; overflow:scroll; overflow-y: scroll;"><%= item.content %></td>
                            <td></td>
@@ -188,9 +189,10 @@
             console.log(rowCount);
             for(var i=last50.length-1; i>=0; i--){
               var item = JSON.parse(last50[i]);
+              var time = (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago"));
               $("#tlbLast50").prepend("<tr>"
-                + "<td style='width:7%; height:120px'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
-                + "<td style='overflow:scroll; width:18%; height:120px'><b>To: </b>" + (item.receiver==undefined?"":item.receiver) + "</br><b>From: </b>" + (item.from==undefined?"":item.from) + "</br><b>Pattern: </b>" + item.pattern+"</td>"
+                // + "<td style='width:7%; height:120px'>" + (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago")) + "</td>"
+                + "<td style='overflow:scroll; width:18%; height:120px'><b>Time: </b>" + time + "</br><b>To: </b>" (item.receiver==undefined?"":item.receiver) + "</br><b>From: </b>" + (item.from==undefined?"":item.from) + "</br><b>Pattern: </b>" + item.pattern+"</td>"
                 + "<td style='overflow:scroll; width:25%; height:120px'>"+(item.code==null?"":item.code)+"</td>"
                 + "<td style='overflow:scroll; width:50%; height:120px'>"+item.content+"</td>"
                 + "</tr>");
