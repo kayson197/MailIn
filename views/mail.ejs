@@ -146,9 +146,9 @@
                          <tr style="line-height:0" role="row" class=<%= i%2==0?"even":"odd" %>>
                            <% var time =  Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %>
                            <!-- <td style="width:7%; height:120px"></td> -->
-                           <td style="width:25%; height:120px; overflow:hidden"><b>Time: </b><%= time %><b></br>To: </b><%= item.receiver %></br><b>From: </b><%= item.from %></br><b>Pattern: </b><%= item.pattern %></td>
-                           <td style="width:25%; height:120px; overflow:hidden"><%= item.code %></td>
-                           <td style="width:50%; height:120px; overflow:scroll; overflow-y: scroll;"><%= item.content %></td>
+                           <td style="width:25%; height:120px; overflow:scroll"><b>Time: </b><%= time %><b></br>To: </b><%= item.receiver %></br><b>From: </b><%= item.from %></br><b>Pattern: </b><%= item.pattern %></td>
+                           <td style="width:25%; height:120px; overflow:scroll"><%= item.code %></td>
+                           <td style="width:50%; height:120px; overflow:scroll"><%= item.content %></td>
                            <td></td>
                          </tr>
                          <% } %>
@@ -283,7 +283,7 @@
                 'pattern': newPattern // <-- the $ sign in the parameter name seems unusual, I would avoid it
             },
             success:function(result) {
-              $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text(newPattern);
+              $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text(newPattern);
               $("#pattern").val("");
               $("#patternIdx").val("");
               $("#selectedPattern").val("");
@@ -333,7 +333,7 @@
     });
 
     function deletePattern(rowIndex){
-      cell = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text();
+      cell = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text();
       if (confirm('Are you sure you want to delete below Pattern? \r\n' + cell)) {
 
         $.ajax({
@@ -356,7 +356,7 @@
     };
 
     function editPattern(rowIndex){
-      cell = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text();
+      cell = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text();
       $("#pattern").val(cell);
       $("#patternIdx").val(rowIndex);
       $("#btnInsert").text("Update");
