@@ -202,7 +202,7 @@ async function findVerificationText(sender, input)
     console.log(e);
   }
   appDomain = sender.split('@');
-  return {"result": "", "pattern": "", "appDomain": appDomain[appDomain.length-1]};
+  return {"result": "", "pattern": "", "appDomain": ""};
 }
 
 nodeMailin.start({
