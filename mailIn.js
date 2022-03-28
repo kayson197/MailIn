@@ -201,7 +201,7 @@ async function findVerificationText(sender, input)
   } catch (e) {
     console.log(e);
   }
-  appDomain = sender.split('@');
+  // appDomain = sender.split('@');
   return {"result": "", "pattern": "", "appDomain": ""};
 }
 
