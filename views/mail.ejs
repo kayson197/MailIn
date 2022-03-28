@@ -89,7 +89,9 @@
               <li class="active"><a href="#pLast50" data-toggle="tab" aria-expanded="true">Last 50 emails</a></li>
               <li class=""><a href="#patterns" data-toggle="tab" aria-expanded="false">Patterns</a></li>
               <li class=""><a href="#tools" data-toggle="tab" aria-expanded="false">Get Code</a></li>
+              <li class="pull-right" style="padding-top: 10px"><button id="btnPause" class="btn btn-danger pull-right btn-block btn-sm">Pause</button></li>
             </ul>
+
             <div class="tab-content">
               <div class="tab-pane active" id="pLast50">
                 <% for(var i=0; i < last50.length; i++) { var item = JSON.parse(last50[i]); %>
@@ -214,60 +216,65 @@
   </div>
 
   <%- include('partials/footer.ejs') %>
-  <<script type="text/javascript">
-    $("#tlbLast50").ready(function(){
-      setTimeout(function(){
-          reloadLast50(); //this will send request again and again;
-      }, 5000);
+  <script type="text/javascript">
+    var pause = false;
+  $("#tlbLast50").ready(function(){
+    setTimeout(function(){
+        reloadLast50(); //this will send request again and again;
+    }, 5000);
   });
   function reloadLast50(){
       $.ajax({
           url: "/api/email/last50",
           success:function(last50){
-            var rowCount = $('#pLast50 .post').length;
-            for(var i=last50.length-1; i>=0; i--){
-              var item = JSON.parse(last50[i]);
-              var time = (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago"));
-                $("#pLast50").prepend(
-                  "<div class='post' style='padding-bottom: 5px'>"
-                    + "<div class='user-block'>"
-                      + "<img class='img-circle img-bordered-sm' src='../../dist/img/avatar04.png' alt='User Image'>"
-                          + "<span class='username'>"
-                            + "<a href=''>" + item.receiver + "</a>"
-                            + "<a href='' class='pull-right btn-box-tool'>Test <i class='fa fa-send-o'></i></a>"
-                          + "</span>"
-                      + "<span class='description'>from: " + item.from + " - " + time +"</span>"
-                    + "</div>"
-                    + "<div class='box-body'>"
-                      + "<div class='form-group' style='padding-bottom: 10px'>"
-                        + "<label for='input' class='col-sm-1 control-label'>Extracted Code</label>"
-                        + "<div class='col-sm-11'>"
-                        + "<p>"+(item.code==null?"N.A":item.code)+"</p>"
-                        + "</div>"
+            if(!pause){
+              var rowCount = $('#pLast50 .post').length;
+              for(var i=last50.length-1; i>=0; i--){
+                var item = JSON.parse(last50[i]);
+                var time = (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago"));
+                  $("#pLast50").prepend(
+                    "<div class='post' style='padding-bottom: 5px'>"
+                      + "<div class='user-block'>"
+                        + "<img class='img-circle img-bordered-sm' src='../../dist/img/avatar04.png' alt='User Image'>"
+                            + "<span class='username'>"
+                              + "<a href=''>" + item.receiver + "</a>"
+                              + "<a href='' class='pull-right btn-box-tool'>Test <i class='fa fa-send-o'></i></a>"
+                            + "</span>"
+                        + "<span class='description'>from: " + item.from + " - " + time +"</span>"
                       + "</div>"
+                      + "<div class='box-body'>"
                         + "<div class='form-group' style='padding-bottom: 10px'>"
-                          + "<label for='input' class='col-sm-1 control-label'>Applied Pattern</label>"
+                          + "<label for='input' class='col-sm-1 control-label'>Extracted Code</label>"
                           + "<div class='col-sm-11'>"
-                            + "<p>"+ (item.pattern==""?"N.A":item.pattern) +" <b> - " + (item.appDomain==""?"N.A":item.appDomain) + "  </b></p>"
+                          + "<p>"+(item.code==null?"N.A":item.code)+"</p>"
                           + "</div>"
                         + "</div>"
-                      + "<div class='form-group'>"
-                        + "<label for='input' class='col-sm-1 control-label'>Email Content</label>"
-                        + "<div class='col-sm-11'>"
-                        + "<textarea id='input' class='form-control' rows='3' style='font-size: 16px; '>"+item.content+"</textarea>"
+                          + "<div class='form-group' style='padding-bottom: 10px'>"
+                            + "<label for='input' class='col-sm-1 control-label'>Applied Pattern</label>"
+                            + "<div class='col-sm-11'>"
+                              + "<p>"+ (item.pattern==""?"N.A":item.pattern) +" <b> - " + (item.appDomain==""?"N.A":item.appDomain) + "  </b></p>"
+                            + "</div>"
+                          + "</div>"
+                        + "<div class='form-group'>"
+                          + "<label for='input' class='col-sm-1 control-label'>Email Content</label>"
+                          + "<div class='col-sm-11'>"
+                          + "<textarea id='input' class='form-control' rows='3' style='font-size: 16px; '>"+item.content+"</textarea>"
+                          + "</div>"
                         + "</div>"
                       + "</div>"
                     + "</div>"
-                  + "</div>"
-                );
-                rowCount--;
-                if(rowCount >= 0)
-                $('#pLast50').children().last().remove();
+                  );
+                  rowCount--;
+                  if(rowCount >= 0)
+                  $('#pLast50').children().last().remove();
+              }
+            }else {
+              console.log("Paused");
             }
-              setTimeout(function(){
-                  reloadLast50(); //this will send request again and again;
-              }, 5000);
-            },
+            setTimeout(function(){
+                reloadLast50(); //this will send request again and again;
+            }, 5000);
+          },
           error:function(result) {
             console.log(result);
             setTimeout(function(){
@@ -393,6 +400,17 @@
       $("#patternIdx").val("");
       $("#selectedPattern").val("");
       $("#btnInsert").text("Insert");
+    });
+
+    $("#btnPause").click(function(e) {
+      e.preventDefault();
+      if($("#btnPause").text() == "Pause"){
+        $("#btnPause").text("Resume");
+        pause = true;
+      }else{
+        $("#btnPause").text("Pause");
+        pause = false;
+      }
     });
 
     $("#btnGetCodeByEmail").click(function(e) {
