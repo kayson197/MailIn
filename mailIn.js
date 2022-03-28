@@ -186,17 +186,17 @@ async function findVerificationText(sender, input)
       }
     }
     // Check in emptyAppPattern
-    for(var pattern of emptyAppPattern){
-      let m;
-      let regex = RegExp(cleanPattern(pattern.pattern), 'g');
-      let array1;
-      while ((array1 = regex.exec(input)) !== null) {
-        if(array1[1] != undefined){
-          let result = array1[1].trim();
-          return {"result": result, "pattern": pattern.pattern, "appDomain": "empty"};
-        }
-      }
-    }
+    // for(var pattern of emptyAppPattern){
+    //   let m;
+    //   let regex = RegExp(cleanPattern(pattern.pattern), 'g');
+    //   let array1;
+    //   while ((array1 = regex.exec(input)) !== null) {
+    //     if(array1[1] != undefined){
+    //       let result = array1[1].trim();
+    //       return {"result": result, "pattern": pattern.pattern, "appDomain": "empty"};
+    //     }
+    //   }
+    // }
   } catch (e) {
     console.log(e);
   }
@@ -267,19 +267,21 @@ nodeMailin.on("message", async function(connection, data, content) {
     // console.log(mContent);
     if(receiver != undefined && receiver.includes('@') && mContent != ""){
       const sfind = await findVerificationText(sender, mContent);
-      // console.log('sfind: ' + sfind.result);
       var result = {};
-      result['time'] = Date.now();
-      result['from'] = sender;
-      result['content'] = mContent;
-      result['code'] = sfind==null?"":sfind.result;
-      result['pattern'] = sfind==null?"":sfind.pattern;
-      result['appDomain'] = sfind==null?"":sfind.appDomain;
-      // console.log(result);
-      //here key will expire after 24 hours
-     client.setex(receiver, 24*60*60, JSON.stringify(result), function(err, rs) {
-       console.log(rs);
-     });
+      if(sfind != null && sfind.pattern != ""){
+        result['time'] = Date.now();
+        result['from'] = sender;
+        result['content'] = mContent;
+        result['code'] = sfind==null?"":sfind.result;
+        result['pattern'] = sfind==null?"":sfind.pattern;
+        result['appDomain'] = sfind==null?"":sfind.appDomain;
+        // console.log(result);
+        //here key will expire after 24 hours
+       client.setex(receiver, 24*60*60, JSON.stringify(result), function(err, rs) {
+         console.log(rs);
+       });
+      }
+      // console.log('sfind: ' + sfind.result);
 
      var fullDetail = result;
      fullDetail['receiver'] = receiver;
