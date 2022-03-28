@@ -1,0 +1,399 @@
+<%- include('partials/header.ejs') %>
+  <!-- Full Width Column -->
+  <div class="content-wrapper" style="min-height: 512px;">
+    <div class="container">
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Test Form</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" style="font-size: 16px" >
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="input" class="col-sm-2 control-label">Input</label>
+                  <div class="col-sm-10">
+                  <textarea id="input" class="form-control" rows="5" placeholder="Enter Input Text..." style="font-size: 16px"></textarea>
+                  </div>
+                </div>
+                <div class="form-group" >
+                  <label for="pattern" class="col-sm-2 control-label">Pattern</label>
+                  <!-- <div class="col-sm-10">
+                    <input type="input" class="form-control" id="pattern" placeholder="Pattern">
+                  </div> -->
+                  <div class="col-sm-10 input-group input-group-sm" style="padding-right: 15px; padding-left:15px">
+                    <span class="input-group-btn">
+                      <button id="btnLink" type="button" class="btn btn-info btn-flat">{link}</button>
+                      <button id="btnLinkMarkDown" type="button" class="btn btn-warning btn-flat">{linkMarkdown}}</button>
+                      <button id="btnNumber" type="button" class="btn btn-danger btn-flat">{number}}</button>
+                      <button id="btnAlphaNumber" type="button" class="btn btn-primary btn-flat">{alphaNumber}</button>
+                    </span>
+                    <input type="text" id="patternIdx" class="form-control" style="font-size: 16px; display: none">
+                    <input type="text" id="pattern" class="form-control" style="font-size: 16px">
+                        <span class="input-group-btn">
+                          <button id="btnInsert" type="button" class="btn btn-info btn-flat" style="font-size: 14px">Insert</button>
+                        </span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="code" class="col-sm-2 control-label">App Domain</label>
+                  <div class="col-sm-10">
+                    <input type="input" class="form-control" id="appDomain" placeholder="App domain" style="font-size: 16px">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="code" class="col-sm-2 control-label">Extracted Code</label>
+                  <div class="col-sm-10">
+                    <input type="input" class="form-control" id="code" placeholder="Code" style="font-size: 16px">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="code" class="col-sm-2 control-label">Applied Pattern</label>
+                  <div class="col-sm-10">
+                    <input type="input" class="form-control" id="selectedPattern" placeholder="Applied Pattern" style="font-size: 16px">
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <button id="btnCancel" class="btn btn-default">Cancel</button>
+                <button id="btnTest" class="btn btn-info pull-right">Test</button>
+                <!-- <button class="btn btn-info pull-right">Update</button> -->
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <i class="fa fa-android"></i>
+                <h3 class="box-title">Patterns List</h3>
+              </div>
+              <!-- /.box-header -->
+              <div class="box-body table-responsive">
+                <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <table id="tblPattern" class="table table-bordered table-hover dataTable" role="grid" aria-describedby="example2_info">
+                        <thead>
+                        <tr role="row">
+                          <th>No</th>
+                          <th>App Domain</th>
+                          <th>Pattern</th>
+                          <th style="width:10%">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                          <% for(var i=0; i < patterns.length; i++) { var item = JSON.parse(patterns[i]); %>
+                           <tr role="row" class=<%= i%2==0?"even":"odd" %>>
+                             <td style='width: 5%'><%= (i+1) %></td>
+                             <td style='width: 30%'><%= item.appDomain %></td>
+                             <td style='width: 55%'><%= item.pattern %></td>
+                             <td style='width: 10%'>
+                               <a style="padding-right: 10px"><i onclick="deletePattern(<%= i %>)" class="fa fa-trash"></i></a>
+                               <a><i onclick="editPattern(<%= i %>)" class="fa fa-edit "></i></a>
+                             </td>
+                           </tr>
+                           <% } %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+              </div>
+              </div>
+              <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+            <!-- /.box -->
+          </div>
+
+          <div class="col-md-8">
+            <div class="box box-solid">
+              <div class="box-header  with-border">
+                <i class="fa fa-file-archive-o"></i>
+                <h3 class="box-title">Last 50 emails</h3>
+              </div>
+              <!-- /.box-header -->
+              <div class="box-body table-responsive">
+                <div id="rrs" class="dataTables_wrapper form-inline dt-bootstrap">
+                  <!-- <div class="row">
+                    <div class="col-sm-6">
+                    </div>
+                    <div class="col-sm-6">
+                    </div>
+                  </div> -->
+                  <!-- <div class="row">
+                    <div class="col-sm-12"> -->
+                    <table id="tlbLast50" class="table  table-bordered table-hover dataTable " role="grid" style="width: 100%; table-layout:fixed;" aria-describedby="example2_info">
+                      <thead>
+                      <tr role="row">
+                        <!-- <th style="width:7%">Time</th> -->
+                        <th style="width:50%">Extracted</th>
+                        <!-- <th style="width:25%">Code</th> -->
+                        <th style="width:50%">Content</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                        <% for(var i=0; i < last50.length; i++) { var item = JSON.parse(last50[i]); %>
+                         <tr style="line-height:0" role="row" class=<%= i%2==0?"even":"odd" %>>
+                           <% var time =  Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago") %>
+                           <!-- <td style="width:7%; height:120px"></td> -->
+                           <td style="width:50%; height:120px; overflow:scroll">
+                             <b>Time: </b><%= time %></br>
+                             <b>To: </b><%= item.receiver %></br>
+                             <b>From: </b><%= item.from %></br>
+                             <b>App: </b><%= item.appDomain %></br>
+                             <b>Pattern: </b><%= item.pattern %></br>
+                             <b>Code: </b><%= item.code %>
+                           </td>
+                           <!-- <td style="width:25%; height:120px; overflow:scroll"><%= item.code %></td> -->
+                           <td style="width:50%; height:120px; overflow:scroll"><%= item.content %></td>
+                           <td></td>
+                         </tr>
+                         <% } %>
+                      </tbody>
+                    </table>
+                  <!-- </div> -->
+                <!-- </div> -->
+
+            </div>
+              </div>
+              <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+            <!-- /.box -->
+          </div>
+        <!-- /.col -->
+        </div>
+        <!-- /.box -->
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <%- include('partials/footer.ejs') %>
+  <<script type="text/javascript">
+    $("#tlbLast50").ready(function(){
+      // setTimeout(function(){
+      //     reloadLast50(); //this will send request again and again;
+      // }, 5000);
+  });
+  function reloadLast50(){
+      $.ajax({
+          url: "/api/email/last50",
+          success:function(last50){
+            var rowCount = $('#tlbLast50 tr').length;
+            console.log(rowCount);
+            for(var i=last50.length-1; i>=0; i--){
+              var item = JSON.parse(last50[i]);
+              var time = (Date.now() - (item.time) > 60000? (Math.round((Date.now() - (item.time)) / (60*1000)) + " mins ago"): (Math.round((Date.now() - (item.time)) / 1000) + " second ago"));
+              $("#tlbLast50").prepend("<tr>"
+                + "<td style='overflow:scroll; width:50%; height:120px'><b>Time: </b>" + time
+                  + "</br><b>To: </b>" + (item.receiver==undefined?"":item.receiver)
+                  + "</br><b>From: </b>" + (item.from==undefined?"":item.from)
+                  + "</br><b>App: </b>" + (item.appDomain==undefined?"":item.appDomain)
+                  + "</br><b>Pattern: </b>" + item.pattern
+                  + "</br><b>Code: </b>" + (item.code==null?"":item.code)+"</td>"
+                // + "<td style='overflow:scroll; width:25%; height:120px'>"+(item.code==null?"":item.code)+"</td>"
+                + "<td style='overflow:scroll; width:50%; height:120px'>"+item.content+"</td>"
+                + "</tr>");
+                rowCount--;
+                if(rowCount > 0)
+                  $('#tlbLast50 tr:last').remove();
+            }
+              setTimeout(function(){
+                  reloadLast50(); //this will send request again and again;
+              }, 5000);
+            },
+          error:function(result) {
+            console.log(result);
+            setTimeout(function(){
+                reloadLast50(); //this will send request again and again;
+            }, 10000);
+          }
+      });
+    }
+    $("#btnTest").click(function(e) {
+      e.preventDefault();
+      if($("#input").val().trim() == ""){
+        alert("Input is empty");
+        return;
+      }
+      $("#code").val("");
+      $.ajax({
+          type: 'POST',
+          url: '/api/email/test',
+          data: {
+              'input': $("#input").val().trim(),
+              'pattern': $("#pattern").val(),
+              'appDomain': $("#appDomain").val()
+          },
+          success:function(response) {
+            console.log(response);
+            let result = response.result;
+            let pattern = response.pattern;
+            let appDomain = response.appDomain;
+            $("#code").val(result==""?"null":result);
+            $("#selectedPattern").val(pattern==""?"null":pattern);
+            $("#appDomain").val(appDomain==""?"null":appDomain);
+          },
+          error:function(result) {
+            console.log(result);
+            alert(result.responseJSON.message);
+          }
+      });
+    });
+
+    $("#btnInsert").click(function(e) {
+      e.preventDefault();
+      if($("#pattern").val().trim() == ""){
+        alert("Pattern is empty");
+        return;
+      }
+      if($("#appDomain").val().trim() == ""){
+        alert("App Domain is empty");
+        return;
+      }
+      if($("#btnInsert").text() == "Insert"){
+        // Insert new
+        $.ajax({
+            type: 'POST',
+            url: '/api/email/patterns',
+            data: {
+                'pattern': $("#pattern").val(),
+                'appDomain': $('#appDomain').val().trim()
+            },
+            success:function(result) {
+              $('#tblPattern tr:last').after("<tr>"
+                + "<td>" + ($('#tblPattern tr').length) + "</td>"
+                + "<td>"+ result.appDomain +"</td>"
+                + "<td>"+ result.pattern +"</td>"
+                + "<td>"
+                  + "<a style='padding-right: 10px'><i onclick='deletePattern("+ ($('#tblPattern tr').length -1) +")' class='fa fa-trash'></i></a>"
+                  + "<a><i onclick='editPattern(" + ($('#tblPattern tr').length -1) + ")' class='fa fa-edit '></i></a>"
+                + "</td>"
+                + "</tr>");
+                $("#pattern").val("");
+                $("#appDomain").val("");
+                $("#patternIdx").val("");
+                $("#selectedPattern").val("");
+              alert("Inserted Successfully!");
+              console.log(result);
+            },
+            error:function(result) {
+              console.log(result);
+              alert(result.responseJSON.message);
+            }
+        });
+      }else{
+        let newPattern = $("#pattern").val().trim();
+        let newAppDomain = $("#appDomain").val().trim();
+        let rowIndex = parseInt($("#patternIdx").val());
+        let updateItem = {'pattern': newPattern, 'appDomain': newAppDomain};
+        // console.log(rowIndex+1);
+        $.ajax({
+            type: 'PATCH',
+            url: '/api/email/patterns',
+            data: {
+                'index': rowIndex,
+                'pattern': JSON.stringify(updateItem)
+            },
+            success:function(result) {
+              $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text(newAppDomain);
+              $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text(newPattern);
+              $("#pattern").val("");
+              $("#appDomain").val("");
+              $("#patternIdx").val("");
+              $("#selectedPattern").val("");
+              $("#btnInsert").text("Insert");
+              alert("Updated Successfully!");
+              console.log(result);
+            },
+            error:function(result) {
+              console.log(result);
+              alert(result.responseJSON.message);
+            }
+        });
+      }
+    });
+
+    $("#btnCancel").click(function(e) {
+      e.preventDefault();
+
+      $("#input").val("");
+      $("#code").val("");
+      $("#pattern").val("");
+      $("#appDomain").val("");
+      $("#patternIdx").val("");
+      $("#selectedPattern").val("");
+      $("#btnInsert").text("Insert");
+    });
+
+    $("#btnLink").click(function(e) {
+      e.preventDefault();
+      console.log("aaa");
+      $("#pattern").val($("#pattern").val() + "{$link} ");
+    });
+
+    $("#btnLinkMarkDown").click(function(e) {
+      e.preventDefault();
+      console.log("aaa");
+      $("#pattern").val($("#pattern").val() + "{$linkMarkdown} ");
+    });
+    $("#btnNumber").click(function(e) {
+      e.preventDefault();
+      console.log("aaa");
+      $("#pattern").val($("#pattern").val() + "{$number} ");
+    });
+    $("#btnAlphaNumber").click(function(e) {
+      e.preventDefault();
+      console.log("aaa");
+      $("#pattern").val($("#pattern").val() + "{$alphaNumber} ");
+    });
+
+    function deletePattern(rowIndex){
+      pattern = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text();
+      appDomain = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text();
+      if (confirm('Are you sure you want to delete? \r\nPattern: ' + pattern + "\r\nAppDomain: " + appDomain)) {
+
+        $.ajax({
+            type: 'DELETE',
+            url: '/api/email/patterns',
+            data: {
+                'pattern': pattern,
+                'appDomain': appDomain
+            },
+            success:function(result) {
+              $('#tblPattern tr').eq(rowIndex+1).remove();
+              console.log(result);
+              alert("Deleted Successfully!");
+            },
+            error:function(result) {
+              console.log(result);
+              alert(result.responseJSON.message);
+            }
+        });
+      }
+    };
+
+    function editPattern(rowIndex){
+      appDomain = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text();
+      pattern = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text();
+      $("#pattern").val(pattern);
+      $("#appDomain").val(appDomain);
+      $("#patternIdx").val(rowIndex);
+      $("#btnInsert").text("Update");
+    };
+  </script>
+
+</body></html>

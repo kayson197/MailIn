@@ -160,31 +160,49 @@ function cleanPattern(value){
 
 async function findVerificationText(sender, input)
 {
-  const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
-  for (var pattern of patterns) {
-    try {
+  try {
+    const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
+    var emptyAppPattern = [];
+    // Check in not emptyApp
+    for (var item of patterns) {
+      var pattern = JSON.parse(item);
+      // Check in push into emptyAppPattern
+      if(pattern && pattern.appDomain == ""){
+        emptyAppPattern.push(pattern)
+      }else{
+        // Extracting code
+        if( sender == "test" || sender.includes(pattern.appDomain)  ){
+          let m;
+          let regex = RegExp(cleanPattern(pattern.pattern), 'g');
+          let array1;
+          while ((array1 = regex.exec(input)) !== null) {
+            if(array1[1] != undefined){
+              let result = array1[1].trim();
+              console.log("aaaaaaaaaaaaaa");
+              return {"result": result, "pattern": pattern.pattern, "appDomain": pattern.appDomain};
+            }
+          }
+        }
+      }
+    }
+    // Check in emptyAppPattern
+    for(var pattern of emptyAppPattern){
       let m;
-      let regex = RegExp(cleanPattern(pattern), 'g');
+      let regex = RegExp(cleanPattern(pattern.pattern), 'g');
       let array1;
       while ((array1 = regex.exec(input)) !== null) {
         if(array1[1] != undefined){
-          // console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
           let result = array1[1].trim();
-          // if (result.includes('://')) {
-          //     // result = htmlspecialchars_decode(result);
-          //     result = htmlspecialchars(result);
-          //     // result = result.replace("\n", urlencode(' '));
-          // }
-          return {"result": result, "pattern": pattern};
+          return {"result": result, "pattern": pattern.pattern, "appDomain": "empty"};
         }
       }
-    } catch (e) {
-      console.log(e);
     }
+  } catch (e) {
+    console.log(e);
   }
-  return {"result": "", "pattern": ""};
+  appDomain = sender.split('@');
+  return {"result": "", "pattern": "", "appDomain": appDomain[appDomain.length-1]};
 }
-
 
 nodeMailin.start({
     port: 25
@@ -233,12 +251,10 @@ nodeMailin.on("startMessage", function(connection) {
     console.log(connection);
 });
 
-
 /* Event emitted after a message was received and parsed. */
 nodeMailin.on("message", async function(connection, data, content) {
-    // console.log(data['text']);
     // console.log(data);
-    const receiver = data['to']['text'];
+    const receiver = data['to']['text'].toLowerCase();
     const sender = data['envelopeFrom']['address'];
     // console.log(sender);
     let htmlContent = data['html'];
@@ -258,6 +274,7 @@ nodeMailin.on("message", async function(connection, data, content) {
       result['content'] = mContent;
       result['code'] = sfind==null?"":sfind.result;
       result['pattern'] = sfind==null?"":sfind.pattern;
+      result['appDomain'] = sfind==null?"":sfind.appDomain;
       // console.log(result);
       //here key will expire after 24 hours
      client.setex(receiver, 24*60*60, JSON.stringify(result), function(err, rs) {
@@ -284,7 +301,7 @@ nodeMailin.on("error", function(error) {
 app.get('/api/verify/email/:email/:timeout', async (req, res) => {
     // result = {"success":false,"error":"No data found","data":null}
     let data = null;
-    const email = req.params.email;
+    const email = req.params.email.toLowerCase();
     // const email =  req.query.email;
     let timeout = 10000;
     if(req.query.timeout != null)
@@ -304,15 +321,15 @@ app.get('/api/verify/email/:email/:timeout', async (req, res) => {
 
 
 app.get('/api/email/patterns/clear', async (req, res) => {
-      client.del(PATTERNS_KEY, function(err, response) {
-     if (response == 1) {
-        console.log("Deleted Successfully!");
-        res.send("Deleted Successfully!");
-     } else{
-      console.log("Cannot delete");
-      res.send("Cannot delete");
-     }
-    })
+    client.del(PATTERNS_KEY, function(err, response) {
+       if (response == 1) {
+          console.log("Deleted Successfully!");
+          res.send("Deleted Successfully!");
+       } else{
+        console.log("Cannot delete");
+        res.send("Cannot delete");
+       }
+    });
 })
 
 app.get('/emails', async (req, res) => {
@@ -341,14 +358,13 @@ function validatePattern(pattern){
 }
 
 app.post('/api/email/patterns/',  async (req, res) => {
-    // result = {"success":false,"error":"No data found","data":null}
-    // const email =  req.query.email;
     const pattern = req.body['pattern'];
-    console.log(pattern);
+    const appDomain = req.body['appDomain'];
+    // console.log(pattern);
     if (pattern && validatePattern(pattern)){
-        client.rpush(PATTERNS_KEY, pattern, async function(err, value) {
+        client.rpush(PATTERNS_KEY, JSON.stringify(req.body), async function(err, value) {
             // reply is null when the key is missing
-            res.send(pattern);
+            res.send(req.body);
         });
     }
     else {
@@ -368,7 +384,7 @@ app.delete('/api/email/patterns/',  async (req, res) => {
     const pattern = req.body['pattern'];
     console.log(pattern);
 
-    client.lrem(PATTERNS_KEY, 0, pattern, function(err, data){
+    client.lrem(PATTERNS_KEY, 0, JSON.stringify(req.body), function(err, data){
       console.log(data); // Tells how many entries got deleted from the list
       res.send("deleted: " + data +" record");
     });
@@ -390,26 +406,24 @@ app.patch('/api/email/patterns/',  async (req, res) => {
 app.post('/api/email/test/',  async (req, res) => {
   const input = req.body['input'];
   let pattern = req.body['pattern'];
+  let appDomain = req.body['appDomain'];
+  appDomain = appDomain==''?'test':appDomain;
   try {
     console.log('input: ' + input);
     console.log('pattern: ' + pattern)
     if(pattern == ""){
-      var response = await findVerificationText("", input);
-      return res.send({"result": response==null?"":response.result, "pattern": response==null?"":response.pattern});
+      var response = await findVerificationText(appDomain, input);
+      return res.send(response);
     }else{
       if(validatePattern(pattern)){
         let regex = RegExp(cleanPattern(pattern), 'g');
         let array1;
         while ((array1 = regex.exec(input)) !== null) {
           if(array1[1] != undefined){
-            console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
+            // console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
             var result = array1[1].trim();
-            // if (result.includes('://')) {
-            //     result = htmlspecialchars(result);
-            //     // result = result.replace("\n", urlencode(' '));
-            // }
             console.log("result: " + result);
-            return res.send({"result": result, "pattern": pattern});
+            return res.send({"result": result, "pattern": pattern, "appDomain": appDomain});
           }
         }
       }else {
@@ -424,38 +438,25 @@ app.post('/api/email/test/',  async (req, res) => {
        message: e.message
     });
   }
-  return res.send({"result": "", "pattern": pattern});
-
+  return res.send({"result": "", "pattern": pattern, "appDomain": appDomain});
 })
 
 
 
-async function initRedis(){
+async function initRedis(patternKey){
   // Check PATTERNS_KEY
-  client.exists(PATTERNS_KEY, function(err, reply) {
+  client.exists(patternKey, function(err, reply) {
     if (reply === 1) {
       console.log('PATTERNS_KEY exists');
     } else {
-      client.rpush(PATTERNS_KEY, patternsOld);
+      client.rpush(patternKey, patternsOld);
       console.log("Inserted");
     }
   });
-
-  //Check LAST50
-  // let last50Val = await client.get(LAST50_KEY);
-  // if (last50Val){
-  //     last50 = JSON.parse(last50Val);
-  //     console.log(last50);
-  // }
 }
-
-// let result  = "https://url4023.youngplatform.com/ls/click?upn=2hDqYz9j1va9CISNN-2F7FRrQdQdsDDwXLC-2BUYCmBXDohSRA0DaCq1Onvhu5vZp2Rxo4aG1K6nSVnJLndk0UDIskQ3FNZZdIPDcQ0bRop3CkJXbwu3GRQT501nHqpTy9sCp3-2FSZwyg1wT0PHSC6XP0HBVhJ8fnWQsRywk6lRJfniR4F1-2F2G7XJP1xH4vPk-2BDCfo53y-2FLO-2BhHUvtbYQ2dvQAnHtgtOxodn8AMtDValo2A1gKJst7NAG-2BLAQDsSYuav021R6VRFvJMPfPTPG89wwVGLI0AwMcpBMQl2-2F4zy63e6vz79G6wmSQkx-2FLrRFKjrCBPMvSFMmf9oiJL02dPZ38YjQ5tKB3CMu22D2NSodJcSWq-2BBFPzbLcK-2B7VZfJJLRpMHH7_utS5XGJX6u-2B5G-2Bs8alXEIAG-2BZJEOuGGA3weXFoA5QjPYe1miV8NQGpUDlJ2T0tPYvDo1sTGXKRoHhGadc2rWTrtB1b7ubepK1ltd8h6hEaWUJBKUyeFJvnWiQ8k6Ms915xIp6ci8jlBuy3s0kT97bSBUsSHj17mrgbu5gmlYsOQtDw2Dw7Jqa7TXwteEnazVXWLVs6HxWdgFGVM3Jw2jfQ-3D-3D";
-// result = htmlspecialchars(result);
-// result = result.replace("\n", urlencode(' '));
-// console.log(result);
 
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
-      // initRedis();
+      initRedis(PATTERNS_KEY);
 })
