@@ -458,5 +458,5 @@ async function initRedis(patternKey){
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
-      initRedis(PATTERNS_KEY);
+      // initRedis(PATTERNS_KEY);
 })
