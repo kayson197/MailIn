@@ -325,7 +325,7 @@
             url: '/api/email/patterns',
             data: {
                 'pattern': $("#pattern").val(),
-                'appDomain': $('#appDomain').val().trim()
+                'appDomain': $('#appDomain').val().trim().toLowerCase();
             },
             success:function(result) {
               $('#tblPattern tr:last').after("<tr>"

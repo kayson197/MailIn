@@ -163,6 +163,7 @@ async function findVerificationText(sender, input)
   try {
     const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
     var emptyAppPattern = [];
+    sender = sender.toLowerCase();
     // Check in not emptyApp
     for (var item of patterns) {
       var pattern = JSON.parse(item);
@@ -171,7 +172,7 @@ async function findVerificationText(sender, input)
         emptyAppPattern.push(pattern)
       }else{
         // Extracting code
-        if( sender == "test" || sender.includes(pattern.appDomain)  ){
+        if( sender == "test" || sender.includes(pattern.appDomain.toLowerCase())  ){
           let m;
           let regex = RegExp(cleanPattern(pattern.pattern), 'g');
           let array1;
