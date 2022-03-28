@@ -314,8 +314,10 @@
         return;
       }
       if($("#appDomain").val().trim() == ""){
-        if (!confirm('Are you sure leave AppDomain empty?'))
-          return;
+        // if (!confirm('Are you sure leave AppDomain empty?'))
+        //   return;
+        alert("AppDomain can not empty");
+        return;
       }
 
       if($("#btnInsert").text() == "Insert"){
