@@ -163,6 +163,7 @@ async function findVerificationText(sender, input)
   try {
     const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
     var emptyAppPattern = [];
+    var appDomain = "";
     sender = sender.toLowerCase();
     // Check in not emptyApp
     for (var item of patterns) {
@@ -176,10 +177,10 @@ async function findVerificationText(sender, input)
           let m;
           let regex = RegExp(cleanPattern(pattern.pattern), 'g');
           let array1;
+          appDomain = pattern.appDomain;
           while ((array1 = regex.exec(input)) !== null) {
             if(array1[1] != undefined){
               let result = array1[1].trim();
-              console.log("aaaaaaaaaaaaaa");
               return {"result": result, "pattern": pattern.pattern, "appDomain": pattern.appDomain};
             }
           }
@@ -202,7 +203,7 @@ async function findVerificationText(sender, input)
     console.log(e);
   }
   // appDomain = sender.split('@');
-  return {"result": "", "pattern": "", "appDomain": ""};
+  return {"result": "", "pattern": "", "appDomain": appDomain};
 }
 
 nodeMailin.start({
