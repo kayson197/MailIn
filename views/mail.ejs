@@ -110,19 +110,20 @@
                       <div class="form-group" style="padding-bottom: 10px">
                         <label for="input" class="col-sm-1 control-label">Extracted Code</label>
                         <div class="col-sm-11">
-                        <p><%= item.code %></p>
+                        <!-- <p><%= item.code %></p> -->
+                        <input  class="form-control" style="font-size: 16px; padding: 0px; border: none" value = '<%= item.code %>'></input>
                         </div>
                       </div>
                         <div class="form-group" style="padding-bottom: 10px">
                           <label for="input" class="col-sm-1 control-label">Applied Pattern</label>
-                          <div class="col-sm-11">
+                          <div class="col-sm-11" >
                             <p><%=  (item.pattern==''?"N.A":item.pattern) %> <b> - <%= item.appDomain %>  </b></p>
                           </div>
                         </div>
                       <div class="form-group">
                         <label for="input" class="col-sm-1 control-label">Email Content</label>
                         <div class="col-sm-11">
-                        <textarea id="input" class="form-control" rows="3" style="font-size: 16px; "><%= item.content %></textarea>
+                        <textarea class="form-control" rows="3" style="font-size: 16px; padding: 0px; border:none"><%= item.content %></textarea>
                         </div>
                       </div>
                     </div>
@@ -246,19 +247,20 @@
                         + "<div class='form-group' style='padding-bottom: 10px'>"
                           + "<label for='input' class='col-sm-1 control-label'>Extracted Code</label>"
                           + "<div class='col-sm-11'>"
-                          + "<p>"+(item.code==null?"N.A":item.code)+"</p>"
+                          // + "<p>"+(item.code==null?"N.A":item.code)+"</p>"
+                          + "<input  class='form-control' style='font-size: 16px; border: none; padding: 0px' value = '"+(item.code==null?"N.A":item.code)+"'></input>"
                           + "</div>"
                         + "</div>"
                           + "<div class='form-group' style='padding-bottom: 10px'>"
                             + "<label for='input' class='col-sm-1 control-label'>Applied Pattern</label>"
                             + "<div class='col-sm-11'>"
-                              + "<p>"+ (item.pattern==""?"N.A":item.pattern) +" <b> - " + (item.appDomain==""?"N.A":item.appDomain) + "  </b></p>"
+                              + "<p stype='padding-left: 15px'>"+ (item.pattern==""?"N.A":item.pattern) +" <b> - " + (item.appDomain==""?"N.A":item.appDomain) + "  </b></p>"
                             + "</div>"
                           + "</div>"
                         + "<div class='form-group'>"
                           + "<label for='input' class='col-sm-1 control-label'>Email Content</label>"
                           + "<div class='col-sm-11'>"
-                          + "<textarea id='input' class='form-control' rows='3' style='font-size: 16px; '>"+item.content+"</textarea>"
+                          + "<textarea id='input' class='form-control' rows='3' style='font-size: 16px; padding: 0px; border:none'>"+item.content+"</textarea>"
                           + "</div>"
                         + "</div>"
                       + "</div>"
