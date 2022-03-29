@@ -265,7 +265,7 @@ nodeMailin.on("message", async function(connection, data, content) {
     });
     mContent = mContent.replace(/]/g,' ');
     mContent = mContent.replace(/\[/g,' ');
-    mContent = mContent.replace(/\n/g,'');
+    mContent = mContent.replace(/\n/g,'').trim();
     // console.log(mContent);
     if(receiver != undefined && receiver.includes('@') && mContent != ""){
       const sfind = await findVerificationText(sender, mContent);
