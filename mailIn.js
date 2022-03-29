@@ -314,12 +314,12 @@ app.get('/api/verify/email/:email/:timeout', async (req, res) => {
     let result = {};
     if (value){
         data = JSON.parse(value);
-        let result = {"success":true,"error":"","data":data.code,"content":data.content};
+        let result = {"success":true,"error":"","data":data.code,"content":data.content, "from":data.from};
         console.log(result);
         res.send(result);
     }
     else {
-        res.send({"success":false,"error":"No data found","data":null,"content":""});
+        res.send({"success":false,"error":"No data found","data":null,"content":"", "from":""});
     }
 })
 

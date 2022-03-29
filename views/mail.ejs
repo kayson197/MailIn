@@ -200,6 +200,12 @@
                           </div>
                         </div>
                         <div class="form-group" >
+                          <label for="toolFrom" class="col-sm-1 control-label">From</label>
+                          <div class="col-sm-11 input-group input-group-sm" style="padding-right: 15px; padding-left:15px">
+                            <input id="toolFrom" class="form-control" placeholder="From email" style="font-size: 16px"></input>
+                          </div>
+                        </div>
+                        <div class="form-group" >
                           <label for="toolEmailContent" class="col-sm-1 control-label">Email Content</label>
                           <div class="col-sm-11" style="padding-right: 15px; padding-left:15px">
                             <textarea id="toolEmailContent" class="form-control" rows="5" placeholder="" style="font-size: 16px"></textarea>
@@ -424,6 +430,7 @@
     $("#btnGetCodeByEmail").click(function(e) {
       e.preventDefault();
       $("#toolCode").val('');
+      $("#toolFrom").val('');
       $("#toolEmailContent").text('');
       $.ajax({
           type: 'GET',
@@ -431,6 +438,7 @@
           success:function(response) {
             // console.log(response);
             $("#toolCode").val(response.success?response.data:response.error);
+            $("#toolFrom").val(response.from);
             $("#toolEmailContent").text(response.content);
           },
           error:function(result) {
