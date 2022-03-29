@@ -42,9 +42,9 @@
                         </span>
                         <input type="text" id="patternIdx" class="form-control" style="font-size: 16px; display: none">
                         <input type="text" id="pattern" class="form-control" style="font-size: 16px">
-                            <span class="input-group-btn">
-                              <button id="btnInsert" type="button" class="btn btn-info btn-flat" style="font-size: 14px">Insert</button>
-                            </span>
+                          <span class="input-group-btn">
+                            <button id="btnInsert" type="button" class="btn btn-info btn-flat" style="font-size: 14px">Insert</button>
+                          </span>
                       </div>
                     </div>
                   </div>
@@ -197,6 +197,12 @@
                             <span class="input-group-btn">
                               <button id="btnCopyCode" type="button" class="btn btn-info btn-flat" style="font-size: 14px">Copy Code</button>
                             </span>
+                          </div>
+                        </div>
+                        <div class="form-group" >
+                          <label for="toolEmailContent" class="col-sm-1 control-label">Email Content</label>
+                          <div class="col-sm-11" style="padding-right: 15px; padding-left:15px">
+                            <textarea id="toolEmailContent" class="form-control" rows="5" placeholder="" style="font-size: 16px"></textarea>
                           </div>
                         </div>
                       </div>
@@ -418,12 +424,14 @@
     $("#btnGetCodeByEmail").click(function(e) {
       e.preventDefault();
       $("#toolCode").val('');
+      $("#toolEmailContent").text('');
       $.ajax({
           type: 'GET',
           url: '/api/verify/email/'+$("#email").val().trim()+"/180",
           success:function(response) {
             // console.log(response);
             $("#toolCode").val(response.success?response.data:response.error);
+            $("#toolEmailContent").text(response.content);
           },
           error:function(result) {
             console.log(result);
