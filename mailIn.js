@@ -169,15 +169,22 @@ async function findVerificationText(sender, input)
       var pattern = JSON.parse(item);
       // Extracting code
       if( pattern != null && (sender == "test" || sender.includes(pattern.appDomain.toLowerCase()) )  ){
-        let m;
-        let regex = RegExp(cleanPattern(pattern.pattern), 'g');
-        let array1;
-        appDomain = pattern.appDomain;
-        while ((array1 = regex.exec(input)) !== null) {
-          if(array1[1] != undefined){
-            let result = array1[1].trim();
-            return {"result": result, "pattern": pattern.pattern, "appDomain": pattern.appDomain, "uniqueContent": pattern.uniqueContent};
-          }
+        if(sender == "test"
+            || pattern.uniqueContent == ""
+            || pattern.uniqueContent == null
+            || pattern.uniqueContent == undefined
+            ||  (pattern.uniqueContent != "" && input.includes(pattern.uniqueContent) )
+          ){
+            let m;
+            let regex = RegExp(cleanPattern(pattern.pattern), 'g');
+            let array1;
+            appDomain = pattern.appDomain;
+            while ((array1 = regex.exec(input)) !== null) {
+              if(array1[1] != undefined){
+                let result = array1[1].trim();
+                return {"result": result, "pattern": pattern.pattern, "appDomain": pattern.appDomain, "uniqueContent": pattern.uniqueContent};
+              }
+            }
         }
       }
     }
