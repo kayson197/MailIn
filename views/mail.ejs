@@ -125,7 +125,7 @@
                         <div class="form-group" style="padding-bottom: 10px">
                           <label for="input" class="col-sm-1 control-label">Applied Pattern</label>
                           <div class="col-sm-11" >
-                            <p><%=  (item.pattern==''?"N.A":item.pattern) %> <b> - <%= item.appDomain + (item.uniqueContent) %>  </b></p>
+                            <p><%=  (item.pattern==''?"N.A":item.pattern) %> <b> - <%= item.appDomain + (item.uniqueContent==undefined?"":(" - " + item.uniqueContent)) %>  </b></p>
                           </div>
                         </div>
                       <div class="form-group">
@@ -276,7 +276,7 @@
                           + "<div class='form-group' style='padding-bottom: 10px'>"
                             + "<label for='input' class='col-sm-1 control-label'>Applied Pattern</label>"
                             + "<div class='col-sm-11'>"
-                              + "<p stype='padding-left: 15px'>"+ (item.pattern==""?"N.A":item.pattern) +" <b> - " + (item.appDomain==""?"N.A":item.appDomain) + (item.uniqueContent==""?"":(" - " + item.uniqueContent)) + "  </b></p>"
+                              + "<p stype='padding-left: 15px'>"+ (item.pattern==""?"N.A":item.pattern) +" <b> - " + (item.appDomain==""?"N.A":item.appDomain) + (item.uniqueContent==undefined?"":(" - " + item.uniqueContent)) + "  </b></p>"
                             + "</div>"
                           + "</div>"
                         + "<div class='form-group'>"
