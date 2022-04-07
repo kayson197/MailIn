@@ -162,43 +162,25 @@ async function findVerificationText(sender, input)
 {
   try {
     const patterns = await client.lrange(PATTERNS_KEY, 0, -1);
-    var emptyAppPattern = [];
     var appDomain = "";
     sender = sender.toLowerCase();
     // Check in not emptyApp
     for (var item of patterns) {
       var pattern = JSON.parse(item);
-      // Check in push into emptyAppPattern
-      if(pattern && pattern.appDomain == ""){
-        emptyAppPattern.push(pattern)
-      }else{
-        // Extracting code
-        if( sender == "test" || sender.includes(pattern.appDomain.toLowerCase())  ){
-          let m;
-          let regex = RegExp(cleanPattern(pattern.pattern), 'g');
-          let array1;
-          appDomain = pattern.appDomain;
-          while ((array1 = regex.exec(input)) !== null) {
-            if(array1[1] != undefined){
-              let result = array1[1].trim();
-              return {"result": result, "pattern": pattern.pattern, "appDomain": pattern.appDomain};
-            }
+      // Extracting code
+      if( pattern != null && (sender == "test" || sender.includes(pattern.appDomain.toLowerCase()) )  ){
+        let m;
+        let regex = RegExp(cleanPattern(pattern.pattern), 'g');
+        let array1;
+        appDomain = pattern.appDomain;
+        while ((array1 = regex.exec(input)) !== null) {
+          if(array1[1] != undefined){
+            let result = array1[1].trim();
+            return {"result": result, "pattern": pattern.pattern, "appDomain": pattern.appDomain, "uniqueContent": pattern.uniqueContent};
           }
         }
       }
     }
-    // Check in emptyAppPattern
-    // for(var pattern of emptyAppPattern){
-    //   let m;
-    //   let regex = RegExp(cleanPattern(pattern.pattern), 'g');
-    //   let array1;
-    //   while ((array1 = regex.exec(input)) !== null) {
-    //     if(array1[1] != undefined){
-    //       let result = array1[1].trim();
-    //       return {"result": result, "pattern": pattern.pattern, "appDomain": "empty"};
-    //     }
-    //   }
-    // }
   } catch (e) {
     console.log(e);
   }
@@ -255,9 +237,9 @@ nodeMailin.on("startMessage", function(connection) {
 
 /* Event emitted after a message was received and parsed. */
 nodeMailin.on("message", async function(connection, data, content) {
-    // console.log(data);
-    const receiver = data['to']['text'].toLowerCase();
-    const sender = data['envelopeFrom']['address'];
+    console.log(data);
+    const receiver = extractEmail(data['to']['text']).toLowerCase();
+    const sender = extractEmail(data['envelopeFrom']['address']);
     // console.log(sender);
     let htmlContent = data['html'];
     let mContent = convert(htmlContent, {
@@ -459,8 +441,22 @@ async function initRedis(patternKey){
   });
 }
 
+function extractEmail(str){
+  try{
+    var regex = /<(.*)>/g; // The actual regex
+    var matches = regex.exec(str);
+    if(matches != null)
+      return matches[1];
+    else
+      return str;
+  }catch{}
+  return str;
+}
+
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
+
+    // console.log(extractEmail("<bounces+6546160-4435-dangduc=ducphe.xyz@em6458.rain.bh"));
       // initRedis(PATTERNS_KEY);
 })

@@ -22,11 +22,19 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-xs-6">
+                  <div class="col-xs-3">
                     <div class="form-group">
-                      <label for="code" class="col-sm-2 control-label">App Domain</label>
-                      <div class="col-sm-10">
-                        <input type="input" class="form-control" id="appDomain" placeholder="App domain" style="font-size: 16px">
+                      <label for="appDomain" class="col-sm-4 control-label">App Domain</label>
+                      <div class="col-sm-8">
+                        <input type="input" class="form-control" id="appDomain" placeholder="App Domain" style="font-size: 16px">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xs-3">
+                    <div class="form-group">
+                      <label for="uniqueContent" class="col-sm-4 control-label">Unique Content</label>
+                      <div class="col-sm-8">
+                        <input type="input" class="form-control" id="uniqueContent" placeholder="Unique Content" style="font-size: 16px">
                       </div>
                     </div>
                   </div>
@@ -117,7 +125,7 @@
                         <div class="form-group" style="padding-bottom: 10px">
                           <label for="input" class="col-sm-1 control-label">Applied Pattern</label>
                           <div class="col-sm-11" >
-                            <p><%=  (item.pattern==''?"N.A":item.pattern) %> <b> - <%= item.appDomain %>  </b></p>
+                            <p><%=  (item.pattern==''?"N.A":item.pattern) %> <b> - <%= item.appDomain + (item.uniqueContent) %>  </b></p>
                           </div>
                         </div>
                       <div class="form-group">
@@ -146,6 +154,7 @@
                             <tr role="row">
                               <th>No</th>
                               <th>App Domain</th>
+                              <th>Unique Content</th>
                               <th>Pattern</th>
                               <th style="width:10%">Action</th>
                             </tr>
@@ -154,7 +163,8 @@
                               <% for(var i=0; i < patterns.length; i++) { var item = JSON.parse(patterns[i]); %>
                                <tr role="row" class=<%= i%2==0?"even":"odd" %>>
                                  <td style='width: 5%'><%= (i+1) %></td>
-                                 <td style='width: 30%'><%= item.appDomain %></td>
+                                 <td style='width: 15%'><%= item.appDomain %></td>
+                                 <td style='width: 15%'><%= item.uniqueContent %></td>
                                  <td style='width: 55%'><%= item.pattern %></td>
                                  <td style='width: 10%'>
                                    <a style="padding-right: 10px"><i onclick="deletePattern(<%= i %>)" class="fa fa-trash"></i></a>
@@ -266,7 +276,7 @@
                           + "<div class='form-group' style='padding-bottom: 10px'>"
                             + "<label for='input' class='col-sm-1 control-label'>Applied Pattern</label>"
                             + "<div class='col-sm-11'>"
-                              + "<p stype='padding-left: 15px'>"+ (item.pattern==""?"N.A":item.pattern) +" <b> - " + (item.appDomain==""?"N.A":item.appDomain) + "  </b></p>"
+                              + "<p stype='padding-left: 15px'>"+ (item.pattern==""?"N.A":item.pattern) +" <b> - " + (item.appDomain==""?"N.A":item.appDomain) + (item.uniqueContent==""?"":(" - " + item.uniqueContent)) + "  </b></p>"
                             + "</div>"
                           + "</div>"
                         + "<div class='form-group'>"
@@ -330,14 +340,20 @@
 
     $("#btnInsert").click(function(e) {
       e.preventDefault();
-      if($("#pattern").val().trim() == ""){
-        alert("Pattern is empty");
+      // Validate input
+      if($("#appDomain").val().trim() == ""){
+        alert("App Domain can not empty");
+        $("#appDomain").focus();
         return;
       }
-      if($("#appDomain").val().trim() == ""){
-        // if (!confirm('Are you sure leave AppDomain empty?'))
-        //   return;
-        alert("AppDomain can not empty");
+      // if($("#uniqueContent").val().trim() == ""){
+      //   alert("Unique Content can not empty");
+      //   $("#uniqueContent").focus();
+      //   return;
+      // }
+      if($("#pattern").val().trim() == ""){
+        alert("Pattern is empty");
+        $("#pattern").focus();
         return;
       }
 
@@ -348,12 +364,14 @@
             url: '/api/email/patterns',
             data: {
                 'pattern': $("#pattern").val(),
+                'uniqueContent': $("#uniqueContent").val(),
                 'appDomain': $('#appDomain').val().trim().toLowerCase()
             },
             success:function(result) {
               $('#tblPattern tr:last').after("<tr>"
                 + "<td>" + ($('#tblPattern tr').length) + "</td>"
                 + "<td>"+ result.appDomain +"</td>"
+                + "<td>"+ result.uniqueContent +"</td>"
                 + "<td>"+ result.pattern +"</td>"
                 + "<td>"
                   + "<a style='padding-right: 10px'><i onclick='deletePattern("+ ($('#tblPattern tr').length -1) +")' class='fa fa-trash'></i></a>"
@@ -375,8 +393,9 @@
       }else{
         let newPattern = $("#pattern").val().trim();
         let newAppDomain = $("#appDomain").val().trim();
+        let newUniqueContent = $("#uniqueContent").val();
         let rowIndex = parseInt($("#patternIdx").val());
-        let updateItem = {'pattern': newPattern, 'appDomain': newAppDomain};
+        let updateItem = {'pattern': newPattern, 'appDomain': newAppDomain, 'uniqueContent': newUniqueContent};
         // console.log(rowIndex+1);
         $.ajax({
             type: 'PATCH',
@@ -387,9 +406,11 @@
             },
             success:function(result) {
               $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text(newAppDomain);
-              $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text(newPattern);
+              $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text(newUniqueContent);
+              $('#tblPattern tr').eq(rowIndex+1).find('td').eq(3).text(newPattern);
               $("#pattern").val("");
               $("#appDomain").val("");
+              $("#uniqueContent").val("");
               $("#patternIdx").val("");
               $("#selectedPattern").val("");
               $("#btnInsert").text("Insert");
@@ -479,7 +500,7 @@
     });
 
     function deletePattern(rowIndex){
-      pattern = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text();
+      pattern = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(3).text();
       appDomain = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text();
       if (confirm('Are you sure you want to delete? \r\nPattern: ' + pattern + "\r\nAppDomain: " + appDomain)) {
 
@@ -505,9 +526,11 @@
 
     function editPattern(rowIndex){
       appDomain = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text();
-      pattern = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text();
+      uniqueContent = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text();
+      pattern = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(3).text();
       $("#pattern").val(pattern);
       $("#appDomain").val(appDomain);
+      $("#uniqueContent").val(uniqueContent);
       $("#patternIdx").val(rowIndex);
       $("#btnInsert").text("Update");
     };
