@@ -97,7 +97,8 @@
               <li class="active"><a href="#pLast50" data-toggle="tab" aria-expanded="true">Last 50 emails</a></li>
               <li class=""><a href="#patterns" data-toggle="tab" aria-expanded="false">Patterns</a></li>
               <li class=""><a href="#tools" data-toggle="tab" aria-expanded="false">Get Code</a></li>
-              <li class="pull-right" style="padding-top: 10px"><button id="btnPause" class="btn btn-danger pull-right btn-block btn-sm">Pause</button></li>
+              <li class="pull-right" style="padding-top: 5px"><button id="btnPause" class="btn btn-danger pull-right btn-block btn-sm">Pause</button></li>
+              <li class="pull-right" style="padding-top: 10px; padding-right: 20px ; font-size: 16px"><p id="lblTotal">Total: <%= total %></p></li>
             </ul>
 
             <div class="tab-content">
@@ -249,8 +250,10 @@
   function reloadLast50(){
       $.ajax({
           url: "/api/email/last50",
-          success:function(last50){
+          success:function(result ){
             if(!pause){
+              var last50 = result.last50;
+              $("#lblTotal").text("Total: " + result.total);
               var rowCount = $('#pLast50 .post').length;
               for(var i=last50.length-1; i>=0; i--){
                 var item = JSON.parse(last50[i]);

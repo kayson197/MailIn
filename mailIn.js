@@ -331,16 +331,24 @@ app.get('/emails', async (req, res) => {
     const email =  req.query.email;
     const values = await client.lrange(PATTERNS_KEY, 0, -1);
     const last50 = await client.lrange(LAST50_KEY, 0, -1);
-    res.render('mail', {
-      title: 'VINIO MAIL',
-      patterns: values,
-      last50: last50
+    client.keys('*', function (err, keys) {
+      if (err) return console.log(err);
+      console.log(keys.length);
+      res.render('mail', {
+        title: 'VINIO MAIL',
+        patterns: values,
+        last50: last50,
+        total: keys.length-2
+      });
     });
 })
 
 app.get('/api/email/last50', async (req, res) => {
-    const last50 = await client.lrange(LAST50_KEY, 0, -1)
-    res.send(last50);
+    const last50 = await client.lrange(LAST50_KEY, 0, -1);
+    client.keys('*', function (err, keys) {
+      if (err) return console.log(err);
+      res.send({"last50": last50, "total": keys.length -2 });
+    });
 })
 
 function validatePattern(pattern){
