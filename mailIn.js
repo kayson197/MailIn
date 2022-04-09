@@ -265,6 +265,7 @@ nodeMailin.on("message", async function(connection, data, content) {
       result['code'] = sfind==null?"":sfind.result;
       result['pattern'] = sfind==null?"":sfind.pattern;
       result['appDomain'] = sfind==null?"":sfind.appDomain;
+      result['uniqueContent'] = sfind==null?"":sfind.uniqueContent;
       if(sfind != null && sfind.pattern != ""){
         // console.log(result);
         //here key will expire after 24 hours
