@@ -409,6 +409,7 @@ app.post('/api/email/test/',  async (req, res) => {
   const input = req.body['input'];
   let pattern = req.body['pattern'];
   let appDomain = req.body['appDomain'];
+  let uniqueContent = req.body['uniqueContent'];
   appDomain = appDomain==''?'test':appDomain;
   try {
     console.log('input: ' + input);
@@ -425,7 +426,7 @@ app.post('/api/email/test/',  async (req, res) => {
             // console.log(`Found ${array1[1]}. Next starts at ${regex.lastIndex}.`);
             var result = array1[1].trim();
             console.log("result: " + result);
-            return res.send({"result": result, "pattern": pattern, "appDomain": appDomain});
+            return res.send({"result": result, "pattern": pattern, "appDomain": appDomain, "uniqueContent": ""});
           }
         }
       }else {

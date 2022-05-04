@@ -323,16 +323,19 @@
           data: {
               'input': $("#input").val().trim(),
               'pattern': $("#pattern").val(),
-              'appDomain': $("#appDomain").val()
+              'appDomain': $("#appDomain").val(),
+              'uniqueContent': $("#uniqueContent").val()
           },
           success:function(response) {
             // console.log(response);
             let result = response.result;
             let pattern = response.pattern;
             let appDomain = response.appDomain;
+            let uniqueContent = response.uniqueContent;
             $("#code").val(result==""?"null":result);
             $("#selectedPattern").val(pattern==""?"null":pattern);
             $("#appDomain").val(appDomain);
+            $("#uniqueContent").val(uniqueContent);
           },
           error:function(result) {
             // console.log(result);
