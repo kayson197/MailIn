@@ -386,7 +386,7 @@ app.delete('/api/email/patterns/',  async (req, res) => {
     const pattern = req.body['pattern'];
     console.log(pattern);
 
-    client.lrem(PATTERNS_KEY, 0, JSON.stringify(req.body), function(err, data){
+    client.lrem(PATTERNS_KEY, 0, pattern, function(err, data){
       console.log(data); // Tells how many entries got deleted from the list
       res.send("deleted: " + data +" record");
     });

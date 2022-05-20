@@ -401,7 +401,7 @@
         let newAppDomain = $("#appDomain").val().trim();
         let newUniqueContent = $("#uniqueContent").val();
         let rowIndex = parseInt($("#patternIdx").val());
-        let updateItem = {'pattern': newPattern, 'appDomain': newAppDomain, 'uniqueContent': newUniqueContent};
+        let updateItem = {'pattern': newPattern, 'uniqueContent': newUniqueContent, 'appDomain': newAppDomain};
         // console.log(rowIndex+1);
         $.ajax({
             type: 'PATCH',
@@ -507,15 +507,16 @@
 
     function deletePattern(rowIndex){
       pattern = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(3).text();
+      uniqueContent = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(2).text();
       appDomain = $('#tblPattern tr').eq(rowIndex+1).find('td').eq(1).text();
+      let deleteItem = {'pattern': pattern, 'uniqueContent': uniqueContent, 'appDomain': appDomain};
       if (confirm('Are you sure you want to delete? \r\nPattern: ' + pattern + "\r\nAppDomain: " + appDomain)) {
 
         $.ajax({
             type: 'DELETE',
             url: '/api/email/patterns',
             data: {
-                'pattern': pattern,
-                'appDomain': appDomain
+              'pattern': JSON.stringify(deleteItem)
             },
             success:function(result) {
               $('#tblPattern tr').eq(rowIndex+1).remove();
